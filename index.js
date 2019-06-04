@@ -22,12 +22,12 @@ function onScan(qrcode, status) {
 // 登录
 async function onLogin(user) {
 	console.log(`贴心小助理${user}登录了`)
-	main(); // 启动时 执行一次
+	// main(); // 启动时 执行一次
 
 	// 登陆后创建定时任务
 	schedule.setSchedule(config.SENDDATE, () => {
 		console.log('你的贴心小助理开始工作啦！')
-		// main()
+		main()
 	})
 }
 
