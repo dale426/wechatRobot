@@ -10,7 +10,7 @@ async function getOne() { // 获取每日一句
   return todayOne;
 }
 
-async function getWeather() { //获取墨迹天气
+async function getWeather(config) { //获取墨迹天气
   let url = config.MOJI_HOST+config.CITY+'/'+config.LOCATION
   let res = await superagent.req(url,'GET')
   let $ = cheerio.load(res.text)

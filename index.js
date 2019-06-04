@@ -2,9 +2,10 @@
  * WechatBot
  *  - https://github.com/gengchen528/wechatBot
  */
-const { Wechaty, Friendship } = require('wechaty')
+const { Wechaty, Friendship, Contact } = require('wechaty')
 const schedule = require('./schedule/index')
 const config = require('./config/index')
+const config2 = require('./config/user')
 const untils = require('./untils/index')
 const superagent = require('./superagent/index')
 const { FileBox } = require('file-box') //文件读取模块
@@ -33,6 +34,7 @@ async function onLogin(user) {
 //登出
 function onLogout(user) {
 	console.log(`${user} 登出`)
+	return bot.stop();
 }
 // 监听对话 根据关键词自动加群
 async function onMessage(msg) {
@@ -45,8 +47,9 @@ async function onMessage(msg) {
 		return
 	}
 	if (room) { // 如果是群消息
-		const topic = await room.topic()
-		console.log(`群名: ${topic} 发消息人: ${contact.name()} 内容: ${content}`)
+		return;
+		/* const topic = await room.topic()
+		console.log(`群名: ${topic} 发消息人: ${contact.name()} 内容: ${content}`) */
 	} else { // 如果非群消息
 		console.log(`发消息人: ${contact.name()} 消息内容: ${content}`)
 		if (config.AUTOADDROOM) { //判断是否开启自动加群功能
@@ -65,26 +68,27 @@ async function onMessage(msg) {
 				}
 			} else {
 				if (config.AUTOREPLY) { // 如果开启自动聊天
-					let reply = await superagent.getReply(content)
-					console.log('图灵机器人回复：', reply)
-					try {
-						await contact.say(reply)
-					} catch (e) {
-						console.error(e)
-					}
+					await speakWithRobot(content)
 				}
 			}
 		} else {
 			if (config.AUTOREPLY) { // 如果开启自动聊天
-				let reply = await superagent.getReply(content)
-				console.log('图灵机器人回复：', reply)
-				try {
-					await contact.say(reply)
-				} catch (e) {
-					console.error(e)
-				}
+				await speakWithRobot(content)
 			}
 		}
+	}
+}
+// 获取机器人回复
+async function speakWithRobot(content) {
+	let reply = await superagent.getReply(content)
+	console.log('图灵机器人回复：', reply);
+	
+	try {
+		let contactFindByAlias = await bot.Contact.find({alias: '千年知己'})
+		await contactFindByAlias.say(reply)
+		// await contact.say(reply)
+	} catch(e) {
+		console.error(e)
 	}
 }
 // 自动加好友功能
@@ -129,17 +133,25 @@ async function onFriendShip(friendship) {
 async function main() {
 	let logMsg
 	let contact = await bot.Contact.find({ name: config.NICKNAME }) || await bot.Contact.find({ alias: config.NAME }) // 获取你要发送的联系人
+	let contact2 = await bot.Contact.find({ alias: config2.NAME }) || await bot.Contact.find({ name: config2.NICKNAME })  // 获取你要发送的联系人
 	let one = await superagent.getOne() //获取每日一句
-	let weather = await superagent.getWeather() //获取天气信息
+	let weather = await superagent.getWeather(config) //获取天气信息
+	let weather2 = await superagent.getWeather(config2) //获取天气信息
+
 	let today = await untils.formatDate(new Date())//获取今天的日期
 	let memorialDay = untils.getDay(config.MEMORIAL_DAY)//获取纪念日天数
 	let str = today + '<br>元气满满的一天开始啦,要开心噢^_^<br>'
-		+ '<br>今日天气<br>' + weather.weatherTips + '<br>' + weather.todayWeather + '<br>每日一句:<br>' + one + '<br><br>'
+		+ '<br>今日天气<br>' + weather.weatherTips + '<br>' + weather.todayWeather + '<br>今日格言:<br>' + one + '<br><br>'
 	/*   let str = today +  '<br>我们在一起的第' + memorialDay + '天<br>'+ '<br>元气满满的一天开始啦,要开心噢^_^<br>'
 			+ '<br>今日天气<br>' + weather.weatherTips +'<br>' +weather.todayWeather+ '<br>每日一句:<br>'+one+'<br><br>'+'————————最爱你的我' */
+
+	let strXIAN = today + '<br>元气满满的一天开始啦,要开心噢^_^<br>'
+	+ '<br>今日天气<br>' + weather2.weatherTips + '<br>' + weather2.todayWeather + '<br>今日格言:<br>' + one + '<br>'
+
 	try {
-		logMsg = str
+		logMsg = strXIAN
 		await contact.say(str) // 发送消息
+		await contact2.say(strXIAN) // 发送消息
 	} catch (e) {
 		logMsg = e.message
 	}
