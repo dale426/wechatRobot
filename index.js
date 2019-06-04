@@ -27,7 +27,7 @@ async function onLogin(user) {
 	// 登陆后创建定时任务
 	schedule.setSchedule(config.SENDDATE, () => {
 		console.log('你的贴心小助理开始工作啦！')
-		main()
+		// main()
 	})
 }
 
