@@ -1,0 +1,33 @@
+{
+	"folders": [
+		{
+			"path": "vue-project-long"
+		},
+		{
+			"path": "myblog-dale426-githubIO"
+		},
+		{
+			"path": "node_nginx"
+		},
+		{
+			"path": "wechatBot"
+		},
+		{
+			"path": "practice-demo"
+		},
+		{
+			"path": "CIC-offical"
+		},
+		{
+			"path": "wechatBot_long"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.classpath": true,
+			"**/.project": true,
+			"**/.settings": true,
+			"**/.factorypath": true
+		}
+	}
+}
