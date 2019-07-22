@@ -6,6 +6,7 @@ const { Wechaty, Friendship, Contact } = require('wechaty')
 const schedule = require('./schedule/index')
 const config = require('./config/index')
 const config2 = require('./config/user')
+const {male, female_one} = require('./config/transfer-msg')
 const untils = require('./untils/index')
 const superagent = require('./superagent/index')
 const { FileBox } = require('file-box') //文件读取模块
@@ -21,14 +22,16 @@ function onScan(qrcode, status) {
 
 // 登录
 async function onLogin(user) {
-	console.log(`贴心小助理${user}登录了`)
+	console.log(`贴心小助理${user}登录了`);
+	let contactMentor = await bot.Contact.find({ alias: male.NAME }) || await bot.Contact.find({ name: male.NICKNAME })  // 获取你要发送的联系人
+	contactMentor.say(`机器人代理已上线，你可以直接把我当妹子了， 你发的消息会直接自动发给妹子`);
 	// main(); // 启动时 执行一次
 
 	// 登陆后创建定时任务
-	schedule.setSchedule(config.SENDDATE, () => {
+	/* schedule.setSchedule(config.SENDDATE, () => {
 		console.log('你的贴心小助理开始工作啦！')
 		main()
-	})
+	}) */
 }
 
 //登出
@@ -52,12 +55,16 @@ async function onMessage(msg) {
 		console.log(`群名: ${topic} 发消息人: ${contact.name()} 内容: ${content}`) */
 	} else { // 如果非群消息
 		console.log(`发消息人: ${contact.name()} 消息内容: ${content}`)
-		if (contact.name() === '胡卫潇1') {
+
+		let alias = await contact.alias();
+		if (alias=== male.NAME) {
 			// 获取发消息的人 
-			let contactMeizi = await bot.Contact.find({ name: config.NICKNAME }) || await bot.Contact.find({ alias: config.NAME }) // 获取你要发送的联系人
+			let contactMeizi = await bot.Contact.find({ alias: female_one.NAME }) || await bot.Contact.find({ name:  female_one.NICKNAME })  // 获取你要发送的联系人
 			contactMeizi.say(content);
-		} else if (contact.name() === '夏橙1')
-		let contactMentor = await bot.Contact.find({ name: config.NICKNAME }) || await bot.Contact.find({ alias: config.NAME }) // 获取你要发送的联系人
+		} else if (alias === female_one.NAME) {
+			let contactMentor = await bot.Contact.find({ alias: male.NAME }) || await bot.Contact.find({ name: male.NICKNAME })  // 获取你要发送的联系人
+			contactMentor.say(`【该消息为小改改发的】： ${content}`)
+		}
 
 	}
 }
