@@ -52,101 +52,21 @@ async function onMessage(msg) {
 		console.log(`群名: ${topic} 发消息人: ${contact.name()} 内容: ${content}`) */
 	} else { // 如果非群消息
 		console.log(`发消息人: ${contact.name()} 消息内容: ${content}`)
-		if (config.AUTOADDROOM) { //判断是否开启自动加群功能
-			let addRoomReg = eval(config.ADDROOMWORD)
-			let roomReg = eval(config.ROOMNAME)
-			if (addRoomReg.test(content) && !room) {
-				let keyRoom = await this.Room.find({ topic: roomReg })
-				if (keyRoom) {
-					try {
-						await contact.say('你好，由于目前群里人数超过100，群主将会看到消息后，第一时间把你拉入群中！')
-						await contact.say('谢谢理解^_^')
-						// await contact.say(roomCodeLocal||roomCodeUrl)
-					} catch (e) {
-						console.error(e)
-					}
-				}
-			} else {
-				if (config.AUTOREPLY) { // 如果开启自动聊天
-					await speakWithRobot(content)
-				}
-			}
-		} else {
-			if (config.AUTOREPLY) { // 如果开启自动聊天
-				await speakWithRobot(content)
-			}
-		}
-	}
-}
-// 获取机器人回复
-async function speakWithRobot(content) {
-	let reply = await superagent.getReply(content)
-	console.log('图灵机器人回复：', reply);
-	
-	try {
-		let contactFindByAlias = await bot.Contact.find({alias: '千年知己'})
-		await contactFindByAlias.say(reply)
-		// await contact.say(reply)
-	} catch(e) {
-		console.error(e)
-	}
-}
-// 自动加好友功能
-async function onFriendShip(friendship) {
-	let logMsg
-	try {
-		logMsg = '添加好友' + friendship.contact().name()
-		console.log(logMsg)
+		if (contact.name() === '胡卫潇1') {
+			// 获取发消息的人 
+			let contactMeizi = await bot.Contact.find({ name: config.NICKNAME }) || await bot.Contact.find({ alias: config.NAME }) // 获取你要发送的联系人
+			contactMeizi.say(content);
+		} else if (contact.name() === '夏橙1')
+		let contactMentor = await bot.Contact.find({ name: config.NICKNAME }) || await bot.Contact.find({ alias: config.NAME }) // 获取你要发送的联系人
 
-		switch (friendship.type()) {
-			/**
-			 *
-			 * 1. New Friend Request
-			 *
-			 * when request is set, we can get verify message from `request.hello`,
-			 * and accept this request by `request.accept()`
-			 */
-			case Friendship.Type.Receive:
-				let addFriendReg = eval(config.ADDFRIENDWORD)
-				if (addFriendReg.test(friendship.hello()) && config.AUTOADDFRIEND) { //判断是否开启自动加好友功能
-					logMsg = '自动添加好友，因为验证信息中带关键字‘每日说’'
-					await friendship.accept()
-				} else {
-					logMsg = '没有通过验证 ' + friendship.hello()
-				}
-				break
-			/**
-			 *
-			 * 2. Friend Ship Confirmed
-			 *
-			 */
-			case Friendship.Type.Confirm:
-				logMsg = 'friend ship confirmed with ' + friendship.contact().name()
-				break
-		}
-	} catch (e) {
-		logMsg = e.message
 	}
-	console.log(logMsg)
 }
+
 // 自动发消息功能
 async function main() {
 	let logMsg
 	let contact = await bot.Contact.find({ name: config.NICKNAME }) || await bot.Contact.find({ alias: config.NAME }) // 获取你要发送的联系人
 	let contact2 = await bot.Contact.find({ alias: config2.NAME }) || await bot.Contact.find({ name: config2.NICKNAME })  // 获取你要发送的联系人
-	let one = await superagent.getOne() //获取每日一句
-	let weather = await superagent.getWeather(config) //获取天气信息
-	let weather2 = await superagent.getWeather(config2) //获取天气信息
-
-	let today = await untils.formatDate(new Date())//获取今天的日期
-	let memorialDay = untils.getDay(config.MEMORIAL_DAY)//获取纪念日天数
-	let str = today + '<br>元气满满的一天开始啦,要开心噢^_^<br>'
-		+ '<br>今日天气<br>' + weather.weatherTips + '<br>' + weather.todayWeather + '<br>今日格言:<br>' + one + '<br><br>'
-	/*   let str = today +  '<br>我们在一起的第' + memorialDay + '天<br>'+ '<br>元气满满的一天开始啦,要开心噢^_^<br>'
-			+ '<br>今日天气<br>' + weather.weatherTips +'<br>' +weather.todayWeather+ '<br>每日一句:<br>'+one+'<br><br>'+'————————最爱你的我' */
-
-	let strXIAN = today + '<br>元气满满的一天开始啦,要开心噢^_^<br>'
-	+ '<br>今日天气<br>' + weather2.weatherTips + '<br>' + weather2.todayWeather + '<br>今日格言:<br>' + one + '<br>'
 
 	try {
 		logMsg = strXIAN
@@ -175,7 +95,6 @@ bot.on('scan', onScan)
 bot.on('login', onLogin)
 bot.on('logout', onLogout)
 bot.on('message', onMessage)
-bot.on('friendship', onFriendShip)
 bot.on('room-join', roomJoin)
 
 bot.start()
