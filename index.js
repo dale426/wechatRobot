@@ -1,7 +1,3 @@
-/**
- * WechatBot
- *  - https://github.com/gengchen528/wechatBot
- */
 const { Wechaty, Friendship, Contact } = require('wechaty')
 const schedule = require('./schedule/index')
 const config = require('./config/index')
@@ -24,7 +20,7 @@ function onScan(qrcode, status) {
 async function onLogin(user) {
 	console.log(`贴心小助理${user}登录了`);
 	let contactMentor = await bot.Contact.find({ alias: male.NAME }) || await bot.Contact.find({ name: male.NICKNAME })  // 获取你要发送的联系人
-	contactMentor.say(`机器人代理已上线，你可以直接把我当妹子了， 你发的消息会直接自动发给妹子`);
+	contactMentor.say(`正式环境-机器人代理已上线`);
 	// main(); // 启动时 执行一次
 
 	// 登陆后创建定时任务
