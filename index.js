@@ -19,8 +19,15 @@ function onScan(qrcode, status) {
 // 登录
 async function onLogin(user) {
 	console.log(`贴心小助理${user}登录了`);
-	let contactMentor = await bot.Contact.find({ alias: male.NAME }) || await bot.Contact.find({ name: male.NICKNAME })  // 获取你要发送的联系人
-	contactMentor.say(`正式环境-机器人代理已上线`);
+		try {
+			let contactMentor = await bot.Contact.find({ alias: male.NAME }) || await bot.Contact.find({ name: male.NICKNAME })  // 获取你要发送的联系人
+			contactMentor.say(`已上线`);
+		} catch (e) {
+			console.log('e', e);
+			
+		}
+
+		
 	// main(); // 启动时 执行一次
 
 	// 登陆后创建定时任务

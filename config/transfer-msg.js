@@ -1,9 +1,9 @@
 const male = {
-    NAME: '卡尔-潇哥',//备注姓名
-    NICKNAME: '爱若疯狂', //昵称
+    NAME: '卡尔潇哥',//备注姓名--卡尔潇哥
+    NICKNAME: '大智若愚', //昵称
 }
 const female_one = {
-    NAME: '工作测试账号318427394',//备注姓名
+    NAME: '测试账号8',//备注姓名
     NICKNAME: '千年知己', //昵称
 }
 
